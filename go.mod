@@ -1,1 +1,1 @@
-module gitee.com/pefish/p-go-json
+module github.com/pefish/go-json
