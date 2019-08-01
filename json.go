@@ -1,4 +1,4 @@
-package p_json
+package go_json
 
 import (
 	"encoding/json"
