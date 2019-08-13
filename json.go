@@ -2,6 +2,7 @@ package go_json
 
 import (
 	"encoding/json"
+	"github.com/mitchellh/mapstructure"
 )
 
 type JsonClass struct {
@@ -72,13 +73,20 @@ func (this *JsonClass) ParseBytes(bytes []byte) interface{} {
 }
 
 func (this *JsonClass) ParseToStruct(str string, struct_ interface{}) {
-	if err := json.Unmarshal([]byte(str), &struct_); err != nil {
+	map_ := this.ParseToMap(str)
+	config := &mapstructure.DecoderConfig{
+		WeaklyTypedInput: true,
+		TagName:          "json",
+		Result:           &struct_,
+	}
+
+	decoder, err := mapstructure.NewDecoder(config)
+	if err != nil {
 		panic(err)
 	}
-}
 
-func (this *JsonClass) ParseBytesToStruct(bytes []byte, struct_ interface{}) {
-	if err := json.Unmarshal(bytes, &struct_); err != nil {
+	err = decoder.Decode(map_)
+	if err != nil {
 		panic(err)
 	}
 }
