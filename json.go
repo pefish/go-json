@@ -51,19 +51,6 @@ func (this *JsonClass) ParseToMapWithErr(str string) (map[string]interface{}, er
 	return result.(map[string]interface{}), nil
 }
 
-func (this *JsonClass) ParseBytesToMapString(bytes []byte) map[string]string {
-	var result interface{}
-	if err := json.Unmarshal(bytes, &result); err != nil {
-		panic(err)
-	}
-	temp := result.(map[string]interface{})
-	out := map[string]string{}
-	for key, value := range temp {
-		out[key] = value.(string)
-	}
-	return out
-}
-
 func (this *JsonClass) ParseBytes(bytes []byte) interface{} {
 	var result interface{}
 	if err := json.Unmarshal(bytes, &result); err != nil {
