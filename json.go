@@ -2,6 +2,8 @@ package go_json
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -11,23 +13,31 @@ type JsonClass struct {
 
 var Json = JsonClass{}
 
-func (this *JsonClass) Stringify(val interface{}) string {
-	result, err := json.Marshal(val)
+func (this *JsonClass) MustStringify(val interface{}) string {
+	str, err := this.Stringify(val)
 	if err != nil {
 		panic(err)
 	}
-	return string(result)
+	return str
 }
 
-func (this *JsonClass) Parse(str string) interface{} {
-	var result interface{}
-	if err := json.Unmarshal([]byte(str), &result); err != nil {
+func (this *JsonClass) Stringify(val interface{}) (string, error) {
+	result, err := json.Marshal(val)
+	if err != nil {
+		return ``, err
+	}
+	return string(result), nil
+}
+
+func (this *JsonClass) MustParse(str string) interface{} {
+	result, err := this.Parse(str)
+	if err != nil {
 		panic(err)
 	}
 	return result
 }
 
-func (this *JsonClass) ParseWithErr(str string) (interface{}, error) {
+func (this *JsonClass) Parse(str string) (interface{}, error) {
 	var result interface{}
 	if err := json.Unmarshal([]byte(str), &result); err != nil {
 		return nil, err
@@ -35,32 +45,54 @@ func (this *JsonClass) ParseWithErr(str string) (interface{}, error) {
 	return result, nil
 }
 
-func (this *JsonClass) ParseToMap(str string) map[string]interface{} {
-	var result interface{}
-	if err := json.Unmarshal([]byte(str), &result); err != nil {
+func (this *JsonClass) MustParseToMap(str string) map[string]interface{} {
+	map_, err := this.ParseToMap(str)
+	if err != nil {
 		panic(err)
 	}
-	return result.(map[string]interface{})
+	return map_
 }
 
-func (this *JsonClass) ParseToMapWithErr(str string) (map[string]interface{}, error) {
-	var result interface{}
-	if err := json.Unmarshal([]byte(str), &result); err != nil {
-		return nil, err
+func (this *JsonClass) ParseToMap(str string) (map[string]interface{}, error) {
+	result, err := this.Parse(str)
+	if err != nil {
+		panic(err)
 	}
-	return result.(map[string]interface{}), nil
+	map_, ok := result.(map[string]interface{})
+	if !ok {
+		return nil, errors.New(fmt.Sprintf(`%T can cast to map[string]interface{}`, result))
+	}
+	return map_, nil
 }
 
-func (this *JsonClass) ParseBytes(bytes []byte) interface{} {
-	var result interface{}
-	if err := json.Unmarshal(bytes, &result); err != nil {
+func (this *JsonClass) MustParseBytes(bytes []byte) interface{} {
+	result, err := this.ParseBytes(bytes)
+	if err != nil {
 		panic(err)
 	}
 	return result
 }
 
-func (this *JsonClass) ParseToStruct(str string, struct_ interface{}) {
-	map_ := this.ParseToMap(str)
+func (this *JsonClass) ParseBytes(bytes []byte) (interface{}, error) {
+	var result interface{}
+	if err := json.Unmarshal(bytes, &result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (this *JsonClass) MustParseToStruct(str string, struct_ interface{}) {
+	err := this.ParseToStruct(str, struct_)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (this *JsonClass) ParseToStruct(str string, struct_ interface{}) error {
+	map_, err := this.ParseToMap(str)
+	if err != nil {
+		return err
+	}
 	config := &mapstructure.DecoderConfig{
 		WeaklyTypedInput: true,
 		TagName:          "json",
@@ -69,11 +101,12 @@ func (this *JsonClass) ParseToStruct(str string, struct_ interface{}) {
 
 	decoder, err := mapstructure.NewDecoder(config)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	err = decoder.Decode(map_)
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }
