@@ -60,7 +60,7 @@ func (this *JsonClass) ParseToMap(str string) (map[string]interface{}, error) {
 	}
 	map_, ok := result.(map[string]interface{})
 	if !ok {
-		return nil, errors.New(fmt.Sprintf(`%T can cast to map[string]interface{}`, result))
+		return nil, errors.New(fmt.Sprintf(`%T cannot cast to map[string]interface{}`, result))
 	}
 	return map_, nil
 }
