@@ -56,7 +56,7 @@ func (this *JsonClass) MustParseToMap(str string) map[string]interface{} {
 func (this *JsonClass) ParseToMap(str string) (map[string]interface{}, error) {
 	result, err := this.Parse(str)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	map_, ok := result.(map[string]interface{})
 	if !ok {
