@@ -77,6 +77,26 @@ func (j *JsonClass) ParseToMap(str string) (map[string]interface{}, error) {
 	return map_, nil
 }
 
+func (j *JsonClass) MustParseBytesToMap(data []byte) map[string]interface{} {
+	map_, err := j.ParseBytesToMap(data)
+	if err != nil {
+		panic(err)
+	}
+	return map_
+}
+
+func (j *JsonClass) ParseBytesToMap(data []byte) (map[string]interface{}, error) {
+	result, err := j.ParseBytes(data)
+	if err != nil {
+		return nil, err
+	}
+	map_, ok := result.(map[string]interface{})
+	if !ok {
+		return nil, errors.New(fmt.Sprintf(`%T cannot cast to map[string]interface{}`, result))
+	}
+	return map_, nil
+}
+
 func (j *JsonClass) MustParseBytes(bytes []byte) interface{} {
 	result, err := j.ParseBytes(bytes)
 	if err != nil {
