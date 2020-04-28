@@ -22,11 +22,27 @@ func (j *JsonClass) MustStringify(val interface{}) string {
 }
 
 func (j *JsonClass) Stringify(val interface{}) (string, error) {
-	result, err := jsoniter.Marshal(val)
+	result, err := j.Marshal(val)
 	if err != nil {
 		return ``, err
 	}
 	return string(result), nil
+}
+
+func (j *JsonClass) MustMarshal(val interface{}) []byte {
+	result, err := j.Marshal(val)
+	if err != nil {
+		panic(err)
+	}
+	return result
+}
+
+func (j *JsonClass) Marshal(val interface{}) ([]byte, error) {
+	result, err := jsoniter.Marshal(val)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 func (j *JsonClass) MustParse(str string) interface{} {
@@ -38,11 +54,7 @@ func (j *JsonClass) MustParse(str string) interface{} {
 }
 
 func (j *JsonClass) Parse(str string) (interface{}, error) {
-	var result interface{}
-	if err := jsoniter.Unmarshal([]byte(str), &result); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return j.ParseBytes([]byte(str))
 }
 
 func (j *JsonClass) MustParseToMap(str string) map[string]interface{} {
