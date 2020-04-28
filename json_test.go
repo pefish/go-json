@@ -29,3 +29,13 @@ func TestJsonClass_ParseToStruct(t *testing.T) {
 	Json.ParseToStruct(str, &a)
 	fmt.Printf(`%#v`, a)
 }
+
+func TestJsonClass_Stringify(t *testing.T) {
+	a, err := Json.Stringify(map[interface{}]interface{}{"1": "1", 1: 2, false: 3,})
+	if err != nil {
+		t.Error()
+	}
+	if a != `{"1":"1","1":2,"false":3}` {
+		t.Error()
+	}
+}
