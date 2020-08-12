@@ -1,9 +1,9 @@
 package go_json
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/json-iterator/go"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -38,7 +38,7 @@ func (j *JsonClass) MustMarshal(val interface{}) []byte {
 }
 
 func (j *JsonClass) Marshal(val interface{}) ([]byte, error) {
-	result, err := jsoniter.Marshal(val)
+	result, err := json.Marshal(val)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +107,7 @@ func (j *JsonClass) MustParseBytes(bytes []byte) interface{} {
 
 func (j *JsonClass) ParseBytes(bytes []byte) (interface{}, error) {
 	var result interface{}
-	if err := jsoniter.Unmarshal(bytes, &result); err != nil {
+	if err := json.Unmarshal(bytes, &result); err != nil {
 		return nil, err
 	}
 	return result, nil
