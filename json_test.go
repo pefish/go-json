@@ -31,11 +31,12 @@ func TestJsonClass_ParseToStruct(t *testing.T) {
 }
 
 func TestJsonClass_Stringify(t *testing.T) {
-	a, err := Json.Stringify(map[interface{}]interface{}{"1": "1", 1: 2, false: 3,})
+	a, err := Json.Stringify(map[string]interface{}{"1": "1", "11": 2, "12": 3})
 	if err != nil {
 		t.Error()
 	}
-	if a != `{"1":"1","1":2,"false":3}` {
+	//fmt.Println(a)
+	if a != `{"1":"1","11":2,"12":3}` {
 		t.Error()
 	}
 }

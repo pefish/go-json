@@ -8,7 +8,6 @@ import (
 )
 
 type JsonClass struct {
-
 }
 
 var Json = JsonClass{}
